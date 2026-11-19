@@ -1,0 +1,10 @@
+{
+  "name": "아침 미션 대시보드",
+  "short_name": "아침 미션",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff8e1",
+  "theme_color": "#e3350d",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
