@@ -17,17 +17,17 @@
   --bg:#fff8e1; --card:#ffffff; --ink:#22264a; --mute:#6b7190; --line:#e6e2d3; --ok:#2e9e5b;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0}
+html,body{height:100%;margin:0;overflow:hidden}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   color:var(--ink);background:var(--bg);
   background-image:radial-gradient(circle at 20px 20px,rgba(255,203,5,.25) 3px,transparent 4px);
   background-size:40px 40px;
-  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   -webkit-user-select:none;user-select:none;touch-action:manipulation;
 }
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
-.app{display:flex;flex-direction:column;gap:12px;min-height:100%;padding:14px}
+#stage{position:fixed;top:env(safe-area-inset-top);right:env(safe-area-inset-right);bottom:env(safe-area-inset-bottom);left:env(safe-area-inset-left);overflow:hidden}
+.app{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;flex-direction:column;gap:12px;padding:14px}
 
 /* 상단 */
 .top{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:stretch}
@@ -65,17 +65,18 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .kids{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
 .kid{display:flex;flex-direction:column;gap:10px;padding:14px}
 .kid.done{border-color:var(--ok);box-shadow:0 5px 0 var(--ok);background:#f3fff6}
-.khead{display:flex;align-items:center;gap:10px}
-.kname{font-size:30px;font-weight:900;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kleft{font-size:16px;font-weight:800;color:var(--mute);text-align:right}
+.khead{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap}
+.kname{font-size:30px;font-weight:900;flex:1 0 auto;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kleft{font-size:16px;font-weight:800;color:var(--mute);text-align:right;white-space:nowrap}
 .kprog{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px}
 .kprog .bar{flex:1}.kprog .bar i{background:linear-gradient(90deg,#7ed957,var(--ok))}
 .sect{font-size:15px;font-weight:900;color:var(--mute);margin-top:2px}
-.items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.items{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px}
+.items.main{flex:1 1 auto}
 .item{display:flex;align-items:center;gap:10px;min-height:66px;padding:8px 12px;border-radius:16px;background:#fff;border:3px solid var(--line);text-align:left;font-size:21px;font-weight:800;transition:transform .08s}
 .item:active{transform:scale(.97)}
 .item .em{font-size:30px;flex:none}
-.item .lb{flex:1;line-height:1.15}
+.item .lb{flex:1;line-height:1.15;word-break:keep-all;overflow-wrap:anywhere}
 .item .ck{flex:none;width:34px;height:34px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-size:20px;color:transparent}
 .item.on{background:#e9f9ee;border-color:var(--ok);color:#3d6b4d}
 .item.on .lb{text-decoration:line-through;text-decoration-thickness:2px}
@@ -83,7 +84,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .item.sup{border-style:dashed;border-color:#f0b400;background:#fffbe6}
 .item.sup.on{border-style:solid;border-color:var(--ok);background:#e9f9ee}
 .week{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:6px}
-.slot{flex:1;aspect-ratio:1;max-width:74px;border-radius:50%;border:3px dashed #cfc8ae;display:grid;place-items:center;font-size:13px;font-weight:900;color:#b9b196;position:relative;background:#fffdf3}
+.slot{flex:1;min-width:0;aspect-ratio:1;max-width:74px;border-radius:50%;border:3px dashed #cfc8ae;display:grid;place-items:center;font-size:13px;font-weight:900;color:#b9b196;position:relative;background:#fffdf3}
 .slot.today{border-color:var(--red);color:var(--red)}
 .slot.got{border:0;background:none}
 .boardbtn{flex:none;padding:10px 14px;border-radius:14px;background:var(--navy);color:#fff;font-weight:900;font-size:15px}
@@ -132,17 +133,19 @@ textarea{min-height:170px;resize:vertical}
 .conf{position:fixed;top:-20px;font-size:28px;animation:fall linear forwards;z-index:21;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 
-@media (max-width:900px){
-  .top{grid-template-columns:1fr 1fr}.count{grid-column:1/-1;order:3}
-  .clock,.weather{min-width:0}
-  .items{grid-template-columns:1fr}
-  .affirm .txt{font-size:22px}.kname{font-size:25px}
-}
-@media (max-width:560px){.kids{grid-template-columns:1fr}.top{grid-template-columns:1fr}.f,.f.two{grid-template-columns:1fr}}
+/* 화면 비율별 배치 (JS가 가장 크게 보이는 배치를 고름) */
+.mB .top,.mC .top{grid-template-columns:1fr 1fr}
+.mB .count,.mC .count{grid-column:1/-1;order:3;flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 14px}
+.mB .count .bar,.mC .count .bar{flex:1 1 100%}
+.mB .clock,.mB .weather,.mC .clock,.mC .weather{min-width:0}
+.mB .items{grid-template-columns:1fr}
+.mC .kids{grid-template-columns:1fr}
+.mB .affirm .txt,.mC .affirm .txt{font-size:23px}
+@media (max-width:560px){.f,.f.two{grid-template-columns:1fr}.sheet{padding:14px}}
 </style>
 </head>
 <body>
-<div class="app">
+<div id="stage"><div class="app" id="app">
   <div class="top">
     <div class="panel clock"><div class="time" id="time">--:--</div><div class="date" id="date"></div></div>
     <div class="panel count" id="count">
@@ -156,12 +159,13 @@ textarea{min-height:170px;resize:vertical}
   <div class="panel affirm">
     <div class="tag">오늘의 한마디</div>
     <div class="txt" id="affirm"></div>
+    <button class="iconbtn" id="musicBtn" aria-label="노래 켜기/끄기">🎵</button>
     <button class="iconbtn" id="wakeBtn" aria-label="화면 꺼짐 방지 상태">💡</button>
     <button class="iconbtn" id="setBtn" aria-label="설정">⚙️</button>
   </div>
 
   <div class="kids" id="kids"></div>
-</div>
+</div></div>
 
 <div class="modal" id="boardModal"><div class="sheet" id="boardSheet"></div></div>
 <div class="modal" id="setModal"><div class="sheet" id="setSheet"></div></div>
@@ -177,7 +181,7 @@ const DEFAULT={
     start:'07:30',
     routine:['🚽 화장실 다녀오기','🧼 세수하고 로션 바르기','🍚 아침밥 먹기','🪥 양치하기','👕 옷 갈아입기','🎒 가방 챙기기','👟 양말·신발 신기'],
     supplies:{0:'',1:'태권도가방',2:'태권도가방',3:'',4:'',5:'태권도가방',6:''},
-    wake:true,sound:true,
+    wake:true,sound:true,autoMusic:true,vol:0.6,
     loc:{name:'안양시 동안구 비산동',lat:37.3975,lon:126.9450},
     custom:[]
   },
@@ -232,18 +236,77 @@ function stkHTML(st){
 
 /* ---------- 소리 ---------- */
 let AC=null;
-function beep(notes){
-  if(!S.cfg.sound)return;
+function ensureAC(){
   try{
     AC=AC||new (window.AudioContext||window.webkitAudioContext)();
-    if(AC.state==='suspended')AC.resume();
-    notes.forEach(([f,t,d])=>{
-      const o=AC.createOscillator(),g=AC.createGain();
-      o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(AC.destination);
-      const s=AC.currentTime+t;g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(.2,s+.02);
-      g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d+.02);
-    });
+    if(AC.state!=='running')AC.resume().catch(()=>{});
   }catch(e){}
+  return AC;
+}
+function tone(dest,f,s,d,vol,type){
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'triangle';o.frequency.value=f;o.connect(g);g.connect(dest);
+  g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(vol,s+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d+.03);
+}
+function beep(notes){
+  if(!S.cfg.sound||!ensureAC())return;
+  try{notes.forEach(([f,t,d])=>tone(AC.destination,f,AC.currentTime+t,d,.25*S.cfg.vol+.05))}catch(e){}
+}
+
+/* ---------- 노래 (직접 만든 경쾌한 8비트 멜로디, 파일·저작권 없음) ---------- */
+const STEP=0.2; // 8분음표 길이(초) = 150BPM
+const MEL=[76,79,84,79,76,79,84,0, 74,79,83,79,74,79,83,0, 72,76,81,76,72,76,81,79, 77,81,84,81,77,-1,79,81,
+           79,-1,76,79,84,-1,83,81, 79,-1,74,79,83,-1,81,79, 81,81,84,81,83,83,86,83, 84,-1,79,76,84,-1,0,0];
+const ROOT=[48,48,43,43,45,45,41,41,48,48,43,43,41,43,48,48]; // 반 마디 단위 베이스
+const hz=m=>440*Math.pow(2,(m-69)/12);
+let music={on:false,timer:null,gain:null,step:0,next:0,auto:false,noise:null},autoStopKey='';
+function noiseBuf(){
+  if(music.noise)return music.noise;
+  const b=AC.createBuffer(1,AC.sampleRate*.05,AC.sampleRate),d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
+  return music.noise=b;
+}
+function schedule(){
+  if(!music.on||AC.state!=='running')return;
+  if(music.next<AC.currentTime)music.next=AC.currentTime+.05;
+  while(music.next<AC.currentTime+.4){
+    const i=music.step%64,t=music.next,g=music.gain,m=MEL[i];
+    if(m>0){let len=1;while(MEL[(i+len)%64]===-1&&len<8)len++;tone(g,hz(m),t,STEP*len*.9,.16,'square')}
+    const r=ROOT[Math.floor(i/4)],k=i%4;
+    tone(g,hz(k===2?r+12:k===3?r+7:r),t,STEP*.85,k===0?.3:.2,'triangle');
+    if(k===0){ // 킥
+      const o=AC.createOscillator(),kg=AC.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);
+      kg.gain.setValueAtTime(.5,t);kg.gain.exponentialRampToValueAtTime(.0001,t+.14);o.connect(kg);kg.connect(g);o.start(t);o.stop(t+.16);
+    }
+    if(i%2===1||k===2){ // 하이햇·박수
+      const n=AC.createBufferSource(),ng=AC.createGain();n.buffer=noiseBuf();ng.gain.value=k===2?.22:.1;n.connect(ng);ng.connect(g);n.start(t);
+    }
+    music.step++;music.next+=STEP;
+  }
+}
+function startMusic(auto){
+  if(music.on||!ensureAC())return;
+  music.gain=AC.createGain();music.gain.gain.value=.55*S.cfg.vol;music.gain.connect(AC.destination);
+  music.on=true;music.auto=!!auto;music.step=0;music.next=0;
+  music.timer=setInterval(schedule,100);schedule();musicUI();
+}
+function stopMusic(){
+  if(!music.on)return;
+  clearInterval(music.timer);music.on=false;
+  try{const g=music.gain;g.gain.setTargetAtTime(0,AC.currentTime,.05);setTimeout(()=>g.disconnect(),600)}catch(e){}
+  musicUI();
+}
+function musicUI(){const b=$('musicBtn');b.textContent=music.on?'🎶':'🎵';b.style.background=music.on?'#ffd6e8':'#fff'}
+$('musicBtn').addEventListener('click',()=>{
+  if(music.on){stopMusic();autoStopKey=dkey(new Date())}else startMusic(false);
+});
+function autoMusic(sec,start,dep,key){ // 미션 시간에 자동 재생 / 출발 시간에 자동 정지
+  const inWin=sec>=start&&sec<dep;
+  if(inWin&&S.cfg.autoMusic&&!music.on&&autoStopKey!==key&&AC){
+    if(AC.state==='running')startMusic(true);else AC.resume().catch(()=>{});
+  }
+  if(!inWin&&music.on&&music.auto)stopMusic();
 }
 
 /* ---------- 시계 / 카운트다운 ---------- */
@@ -275,6 +338,7 @@ function tick(){
     const l=hm(k.depart)*60-sec;
     el.textContent=l>0?`${k.depart} 출발 · ${Math.ceil(l/60)}분 남음`:`${k.depart} 출발`;
   });
+  autoMusic(sec,start,dep,key);
 }
 
 /* ---------- 화면 ---------- */
@@ -309,12 +373,12 @@ function renderKids(){
       <div class="khead"><div class="kname">${done?'🏅':'🧢'} ${esc(k.name)}</div><div class="kleft" id="kleft${i}"></div></div>
       <div class="kprog"><div class="bar"><i style="width:${total?n/total*100:0}%"></i></div><span>${n} / ${total}</span></div>
       <div class="sect">아침 준비 미션</div>
-      <div class="items">${t.r.map(x=>item('r:',x,false)).join('')}</div>
+      <div class="items main">${t.r.map(x=>item('r:',x,false)).join('')}</div>
       ${t.s.length?`<div class="sect">🎒 ${DOW[dow]}요일 방과후 준비물</div><div class="items">${t.s.map(x=>item('s:',x,true)).join('')}</div>`:''}
       <div class="week">${week}<button class="boardbtn" data-board="${i}">도장판<br>${countStickers(i)}개</button></div>
     </div>`;
   }).join('');
-  save();tickSoon();
+  save();tickSoon();fit();
 }
 function tickSoon(){if(curKey)tick()}
 function countStickers(i){return Object.values(S.days).filter(d=>d[i]&&d[i].st).length}
@@ -395,7 +459,7 @@ function wakeText(){
   return wl?'✅ 작동 중 — 이 화면이 보이는 동안 꺼지지 않아요.':'대기 중 — 화면을 한 번 터치하면 다시 켜집니다.';
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){acquireWake();loadWeather()}});
-document.addEventListener('pointerdown',()=>{if(S.cfg.wake&&!wl)acquireWake()});
+document.addEventListener('pointerdown',()=>{ensureAC();if(S.cfg.wake&&!wl)acquireWake()});
 $('wakeBtn').addEventListener('click',()=>{S.cfg.wake=!S.cfg.wake;save();S.cfg.wake?acquireWake():releaseWake()});
 
 /* ---------- 날씨 (Open-Meteo, 키 불필요) ---------- */
@@ -416,6 +480,7 @@ function renderWeather(){
   el.innerHTML=`<div class="sub">📍 ${name}${old?' · 이전 정보':''}</div>
     <div class="row"><div class="ico">${ico}</div><div><div class="temp">${Math.round(W.t)}°</div><div class="sub">${txt} · 최저 ${Math.round(W.min)}° / 최고 ${Math.round(W.max)}°</div></div></div>
     <div class="chips">${chips}</div><div class="tip">${tip}</div>`;
+  fit();
 }
 let wBusy=false;
 async function loadWeather(force){
@@ -445,7 +510,10 @@ function openSettings(){
   $('setSheet').innerHTML=`<h2><span>⚙️ 설정</span></h2>
     <label class="switch"><input type="checkbox" id="sWake" ${c.wake?'checked':''}> 화면 꺼짐 방지 켜기</label>
     <p class="hint" id="wakeState">${wakeText()}</p>
+    <label class="switch" style="margin-top:8px"><input type="checkbox" id="sAuto" ${c.autoMusic?'checked':''}> 미션 시간에 신나는 노래 자동 재생</label>
+    <p class="hint">시작 시간에 켜지고 출발 시간에 꺼져요. 🎵 버튼으로 언제든 켜고 끌 수 있어요. (기기 정책상 화면을 한 번이라도 터치한 뒤부터 소리가 납니다)</p>
     <label class="switch" style="margin-top:8px"><input type="checkbox" id="sSound" ${c.sound?'checked':''}> 체크·도장 효과음</label>
+    <label class="switch" style="margin-top:8px">🔊 소리 크기 <input type="range" id="sVol" min="0.1" max="1" step="0.1" value="${c.vol}" style="flex:1;width:auto;height:30px"></label>
 
     <h3>아이 이름 · 출발 시간</h3>
     <div class="f two">${c.kids.map((k,i)=>`<span>${i+1}번 트레이너</span><input type="text" id="sName${i}" value="${esc(k.name)}" maxlength="10"><input type="time" id="sDep${i}" value="${k.depart}">`).join('')}
@@ -487,7 +555,8 @@ function openSettings(){
   $('sSave').onclick=()=>{
     c.kids.forEach((k,i)=>{k.name=$('sName'+i).value.trim()||k.name;k.depart=$('sDep'+i).value||k.depart});
     c.start=$('sStart').value||c.start;
-    c.sound=$('sSound').checked;
+    c.sound=$('sSound').checked;c.autoMusic=$('sAuto').checked;c.vol=parseFloat($('sVol').value)||.6;
+    if(music.gain)music.gain.gain.value=.55*c.vol;if(c.autoMusic)autoStopKey='';
     const r=$('sRoutine').value.split('\n').map(s=>s.trim()).filter(Boolean);if(r.length)c.routine=r;
     for(let d=0;d<7;d++)c.supplies[d]=$('sSup'+d).value.trim();
     const lat=parseFloat($('sLat').value),lon=parseFloat($('sLon').value);
@@ -516,10 +585,36 @@ function shrink(file){ // 도장용 160px 정사각 JPEG로 축소
 }
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
 
+/* ---------- 화면에 딱 맞추기 ----------
+   배치 3종(A 가로형 / B 정사각형 / C 세로형) 각각에 대해 화면 비율에 꼭 맞는 설계 폭을 찾고,
+   글자가 가장 크게 나오는 배치를 골라 전체를 확대·축소한다. 스크롤 없음. */
+const MODES=[['mA',1100],['mB',640],['mC',520]];
+function fit(){
+  const st=$('stage'),app=$('app'),vw=st.clientWidth,vh=st.clientHeight;
+  if(!vw||!vh)return;
+  app.style.transform='none';app.style.height='auto';
+  let best=null;
+  for(const[cls,minW]of MODES){
+    app.className='app '+cls;
+    const fits=W=>{app.style.width=W+'px';return app.offsetHeight*vw/W<=vh};
+    let lo=minW,hi=4000;
+    if(!fits(hi))continue;
+    if(fits(lo))hi=lo;else for(let i=0;i<11;i++){const mid=(lo+hi)/2;fits(mid)?hi=mid:lo=mid}
+    hi=Math.ceil(hi);
+    if(!best||hi<best.W)best={cls,W:hi};
+  }
+  if(!best)best={cls:'mC',W:4000};
+  const sc=vw/best.W;
+  app.className='app '+best.cls;app.style.width=best.W+'px';app.style.height=(vh/sc)+'px';app.style.transform=`scale(${sc})`;
+}
+let fitT=0;const refit=()=>{clearTimeout(fitT);fitT=setTimeout(fit,60)};
+addEventListener('resize',refit);addEventListener('orientationchange',refit);
+if(window.visualViewport)visualViewport.addEventListener('resize',refit);
+
 /* ---------- 시작 ---------- */
 tick();setInterval(tick,1000);
 renderWeather();loadWeather();setInterval(()=>loadWeather(),10*60e3);
-acquireWake();
+acquireWake();fit();
 </script>
 </body>
 </html>
