@@ -30,28 +30,29 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .app{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;flex-direction:column;gap:12px;padding:14px}
 
 /* 상단 */
-.top{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:stretch}
+.top{display:grid;grid-template-columns:1fr 1.2fr 1.35fr;gap:12px;align-items:stretch}
+.top>.panel{container-type:inline-size;min-width:0}
 .panel{background:var(--card);border-radius:22px;border:3px solid var(--navy);box-shadow:0 5px 0 var(--navy);padding:12px 18px}
-.clock{display:flex;flex-direction:column;justify-content:center;min-width:230px;background:var(--red);color:#fff;position:relative;overflow:hidden}
-.clock:after{content:"";position:absolute;right:-34px;bottom:-34px;width:110px;height:110px;border-radius:50%;
+.clock{display:flex;flex-direction:column;justify-content:center;background:var(--red);color:#fff;position:relative;overflow:hidden}
+.clock:after{content:"";position:absolute;right:-11cqw;bottom:-34px;width:38cqw;height:38cqw;border-radius:50%;
   background:radial-gradient(circle,#fff 0 18%,var(--navy) 19% 27%,transparent 28%),linear-gradient(#ffffff33 0 46%,var(--navy) 46% 54%,#ffffff22 54%);opacity:.5}
-.clock .time{font-size:58px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
-.clock .date{font-size:19px;font-weight:700;margin-top:6px;opacity:.95}
-.count{display:flex;flex-direction:column;justify-content:center;gap:8px}
-.count .label{font-size:19px;font-weight:800;color:var(--mute)}
-.count .big{font-size:40px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
+.clock .time{font-size:max(58px,27cqw);position:relative;z-index:1;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.clock .date{font-size:max(19px,8.5cqw);position:relative;z-index:1;font-weight:700;margin-top:6px;opacity:.95}
+.count{display:flex;flex-direction:column;justify-content:center;gap:1.6cqw}
+.count .label{font-size:max(19px,5cqw);font-weight:800;color:var(--mute)}
+.count .big{font-size:max(40px,13cqw);font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums}
 .count.warn .big{color:#e08a00}.count.hurry .big{color:var(--red);animation:pulse 1s infinite}
 .bar{height:16px;border-radius:10px;background:#eee7cf;overflow:hidden;border:2px solid var(--navy)}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--yellow),#ff9d00);transition:width .5s}
 .count.hurry .bar i{background:var(--red)}
-.weather{min-width:270px;display:flex;flex-direction:column;justify-content:center;gap:4px}
-.weather .row{display:flex;align-items:center;gap:10px}
-.weather .ico{font-size:50px;line-height:1}
-.weather .temp{font-size:38px;font-weight:900;line-height:1}
-.weather .sub{font-size:15px;color:var(--mute);font-weight:700}
-.weather .tip{font-size:16px;font-weight:800;color:var(--blue)}
+.weather{display:flex;flex-direction:column;justify-content:center;gap:.6cqw}
+.weather .row{display:flex;align-items:center;gap:3cqw}
+.weather .ico{font-size:max(50px,16cqw);line-height:1}
+.weather .temp{font-size:max(38px,13cqw);font-weight:900;line-height:1}
+.weather .sub{font-size:max(15px,4.4cqw);color:var(--mute);font-weight:700}
+.weather .tip{font-size:max(16px,4.8cqw);font-weight:800;color:var(--blue)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font-size:13px;font-weight:800;padding:3px 9px;border-radius:99px;background:#eef3ff;color:var(--navy)}
+.chip{font-size:max(13px,3.9cqw);font-weight:800;padding:3px 9px;border-radius:99px;background:#eef3ff;color:var(--navy)}
 .chip.g1{background:#dff5e6;color:#17693a}.chip.g2{background:#e4efff;color:#1d4f9c}.chip.g3{background:#ffe9c7;color:#9a5a00}.chip.g4{background:#ffd9d2;color:#a11b05}
 
 /* 확언 */
@@ -137,7 +138,8 @@ textarea{min-height:170px;resize:vertical}
 .mB .top,.mC .top{grid-template-columns:1fr 1fr}
 .mB .count,.mC .count{grid-column:1/-1;order:3;flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px 14px}
 .mB .count .bar,.mC .count .bar{flex:1 1 100%}
-.mB .clock,.mB .weather,.mC .clock,.mC .weather{min-width:0}
+.mB .count .big,.mC .count .big{font-size:max(40px,7cqw)}
+.mB .count .label,.mC .count .label{font-size:max(19px,2.8cqw)}
 .mB .items{grid-template-columns:1fr}
 .mC .kids{grid-template-columns:1fr}
 .mB .affirm .txt,.mC .affirm .txt{font-size:23px}
